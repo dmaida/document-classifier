@@ -13,7 +13,8 @@ def processing(f_in):
 	input_string = input_string.lower() #to lower case
 	input_string = re.sub("[^0-9a-z]+", ' ', input_string)
 	input_string = re.sub('\s+', ' ', input_string).strip() #compresses spaces
-	print(input_string)
+	#print(input_string)
+	return input_string
 
 def main(argv):
 	"""
