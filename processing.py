@@ -8,7 +8,7 @@ def processing(f_in):
 	2) removes all non ascii characters and replaces them with spaces
 	3) compresses all spaces to a single space
 	"""
-	
+	f_in = open(f_in, 'r')
 	input_string = f_in.read() #read in
 	input_string = input_string.lower() #to lower case
 	input_string = re.sub("[^0-9a-z]+", ' ', input_string)
