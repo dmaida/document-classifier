@@ -3,6 +3,13 @@ import pickle
 import os
 import sys
 
+def get_frequency(path, file_list):
+	words = ''
+	for f in file_list:
+		words += processing.processing(os.path.join(base_path, f))
+	words = words.split() #splits into list on whitespace
+	total_num_words = len(words)
+
 def main(argv):
 	base_path = argv
 	print(argv)
@@ -16,12 +23,9 @@ def main(argv):
 	dt_files = [f for f in os.listdir(dt_path) if os.path.isfile(os.path.join(dt_path, f))]
 	l_files = [f for f in os.listdir(l_path) if os.path.isfile(os.path.join(l_path, f))]
 
-	dr_word_list = []
-	dt_word_list = []
-	l_word_list = []
-	words = ''
-	for f in dr_files:
-		words += processing.processing(os.path.join(dr_path, f))
-	print(words)
+	dr_word_list = get_words(dr_path, dr_files)
+	dt_word_list = get_words(dt_path, dt_files)
+	l_word_list = get_words(l_path, l_files)
+	
 if __name__ == '__main__':
 	main(sys.argv)
