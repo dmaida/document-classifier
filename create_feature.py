@@ -32,9 +32,9 @@ def main(argv):
 	dr_freq = get_frequency(dr_path, dr_files)
 	dt_freq = get_frequency(dt_path, dt_files)
 	l_freq = get_frequency(l_path, l_files)
-	print(dr_freq)
-	print(dt_freq)
-	print(l_freq)
+	#print(dr_freq)
+	#print(dt_freq)
+	#print(l_freq)
 
 if __name__ == '__main__':
 	main(sys.argv)
