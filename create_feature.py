@@ -52,7 +52,7 @@ def get_frequency_from_training_documents(processed_documents):
 	l_freq = get_frequency(processed_documents.l)
 	return [dr_freq, dt_freq, l_freq]
 
-def main(agrv):
+def main(argv):
 	if len(argv) != 2:
 		base_path = 'data'
 	else:

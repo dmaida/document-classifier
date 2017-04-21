@@ -25,7 +25,7 @@ def main(argv):
 		print("Must provide a file as an argument")
 		return
 	if len(argv) > 2:
-		print("Must procide only one argument for processing")
+		print("Must provide only one argument for processing")
 		return
 	processing(argv[1])
 
