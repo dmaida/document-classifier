@@ -6,13 +6,15 @@ from collections import Counter, namedtuple
 
 documentTypes = namedtuple('documentTypes', ['dr', 'dt','l'])
 
-"""Creates a boolean bag of words feature set"""
+"""Creates a boolean bag of words feature set from the the three different classes of documents
+Documents is expect to have to dr, dt, and dt dictionary full their documents
+it then combines 20 most frequent words in each class, and removes duplicates to retun a set"""
 def create_boolean_feature_set(documents):
 	dr_freq, dt_freq, l_freq = get_frequency_from_training_documents(documents)
 	#combines the lists
 	feature_words = [ x[0] for x in dr_freq ] + [ x[0] for x in dt_freq ] + [ x[0] for x in l_freq ]
 	#The set gets rid of duplicates, then it makes a dictionary for a bag for word
-	return dict.fromkeys(set(feature_words))
+	return set(feature_words)
 
 def get_frequency(document_dict):
 	words = ''
@@ -25,7 +27,8 @@ def get_frequency(document_dict):
 	#print(frequency_list)
 	sorted_freq_list = sorted(frequency_list, key=lambda x: x[1], reverse=True)
 	return sorted_freq_list[0:20]
-
+"""Creates a list of dictionaries for each type of doucment that's key is file name, and value is the processed text.
+It is returned in a tuple, where documents[0] = dr, documents[1] = dt, documents[2] = l """
 def create_naive_document_dictionaries_from_training_files(base_path):
 	dr_path = os.path.join(base_path,'DR')
 	dt_path = os.path.join(base_path, 'DT')
