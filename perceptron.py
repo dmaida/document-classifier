@@ -4,29 +4,40 @@ import sys
 import pickle
 import os
 from collections import Counter
+from random import shuffle
 
 class perceptron():
 
 	def __init__(self, doc_class, feature_set):
 		self.doc_class = doc_class
 		self.feature_set = {}
-		self.bias = 1
+		self.bias = 0.5
 		self.alpha = 0.1
 		for word in feature_set:
-			self.feature_set[word] = 1
+			self.feature_set[word] = 0.5
 
-	def _freqs(self,):
+	def _freqs(self, word_list):
 		"""
-		should get freqs for all words in training set
+		Returns a dictionary of frequencies mapped to each word in the training set 
 		"""
+		num_words = len(word_list)
+		doc_freq = {}
+		for key in self.feature_set:
+			c = word_list.count(key)
+			doc_freq[key] = c/num_words
+		return doc_freq
 
 	def _training(self, training_set):
 		"""
 
 		"""
 		in_score = 0
-
-
+		shuffle(training_set) #randomly shuffles the training set.  Should happen every iteration
+		for doc in training_set:
+			doc_data = word_bag(doc[0])
+			freq = self._freqs(doc_data)
+			print(freq)
+			break
 
 def word_bag(f_path):
 	"""
@@ -55,6 +66,13 @@ def create_training_set():
 
 def main(argv):
     print(argv)
+    path = 'data'
+    documents = create_feature.create_naive_document_dictionaries_from_training_files(path)
+    features = list(dict.fromkeys(create_feature.create_boolean_feature_set(documents) ))
+    training_set = create_training_set()
+    print(training_set[0])
+    p = perceptron('DR',features) #DT perceptron
+    p._training(training_set)
 
 if __name__ == '__main__':
     main(sys.argv)
