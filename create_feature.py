@@ -27,6 +27,13 @@ def get_frequency(document_dict):
 	#print(frequency_list)
 	sorted_freq_list = sorted(frequency_list, key=lambda x: x[1], reverse=True)
 	return sorted_freq_list[0:20]
+
+def get_documents_from_folder(path):
+	doc_files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+	doc = {}
+	for f in doc_files:
+		doc[f] =  processing.processing(os.path.join(path,f))
+	return doc
 """Creates a list of dictionaries for each type of doucment that's key is file name, and value is the processed text.
 It is returned in a tuple, where documents[0] = dr, documents[1] = dt, documents[2] = l """
 def create_naive_document_dictionaries_from_training_files(base_path):
