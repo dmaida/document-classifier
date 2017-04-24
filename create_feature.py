@@ -62,6 +62,20 @@ def get_frequency_from_training_documents(processed_documents):
 	l_freq = get_frequency(processed_documents.l)
 	return [dr_freq, dt_freq, l_freq]
 
+def accuracy_of_results(results, answers_path):
+	f = open(answers_path, 'r')
+	total = len(results)
+	correct = 0
+	wrong = 0
+	for line in f:
+		document, answer = line.split(',')
+		answer = answer.strip()
+		document = document.strip()
+		if answer == results[document]:
+			correct += 1
+	print("Correct: {} Wrong: {} Total: {}".format(correct, total - correct , total))
+	print("Precentage: {0:.5f}%".format(float(correct/total), "%") )
+
 def main(argv):
 	if len(argv) != 2:
 		base_path = 'data'

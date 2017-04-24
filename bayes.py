@@ -30,7 +30,9 @@ def naive_bayes(path):
     for doc in test_docs:
         doc_given_class = [[compute_probablity_of_doc_given_class(test_docs[doc], dr_probability_bag_of_words), "DR"], [compute_probablity_of_doc_given_class(test_docs[doc], dt_probability_bag_of_words), "DT"], [compute_probablity_of_doc_given_class(test_docs[doc], l_probability_bag_of_words), "L"] ]
         results[doc] = max( doc_given_class)[1]
-        print(doc,results[doc])
+        #print(doc,results[doc])
+    create_feature.accuracy_of_results(results, "data/test-results.txt")
+
 
 def compute_probablity_of_doc_given_class(document_str, class_probabilties):
     #first fill the bag of words if needed
