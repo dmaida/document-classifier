@@ -3,9 +3,9 @@ import create_feature
 import sys
 import pickle
 import os
+import random
 from collections import Counter
 from random import shuffle
-from random import random
 
 class perceptron():
 
@@ -28,6 +28,9 @@ class perceptron():
 			doc_freq[key] = c/num_words
 		return doc_freq
 
+
+	def get_class(self):
+		return self.doc_class
 
 	def _training(self, training_set):
 		"""
@@ -76,8 +79,7 @@ class perceptron():
 		print('Total false negatives: ', tot_false_neg)
 		print('Total false positives: ', tot_false_pos)
 
-	def testing(self,path):
-
+	
 
 def word_bag(f_path):
 	"""
@@ -104,6 +106,28 @@ def create_training_set():
 		
 	return training_list
 
+def testing(DR_p, DT_p, L_p,path):
+		result_dict = {}
+		for f in os.listdir(path):
+			DR_score = 0
+			DT_score = 0
+			L_score = 0
+			doc_data = word_bag(os.path.join(path,f))
+			freq = DR_p._freqs(doc_data)
+			#print(freq)
+			result_list = []
+			for word in freq:
+				DR_score += freq[word]*DR_p.feature_set[word]
+				DT_score += freq[word]*DT_p.feature_set[word]
+				L_score += freq[word]*L_p.feature_set[word]
+			if DR_score >= 0: result_list.append('DR')
+			if DT_score >= 0: result_list.append('DT')
+			if L_score >= 0: result_list.append('L')
+			if len(result_list) == 0: result_list = ['DR', 'DT', 'L']
+			result_dict[f] = random.choice(result_list)
+		print(result_dict)
+		create_feature.accuracy_of_results(result_dict,'./data/test-results.txt')
+
 def main():
     path = 'data'
     documents = create_feature.create_naive_document_dictionaries_from_training_files(path)
@@ -111,8 +135,13 @@ def main():
     training_set = create_training_set()
     print(len(training_set))
     print(features)
-    p = perceptron('DR',features) #DT perceptron
-    p._training(training_set)
+    DR_p = perceptron('DR',features) #DR perceptron
+    DT_p = perceptron('DT',features)
+    L_p = perceptron('L',features)
+    DR_p._training(training_set)
+    DT_p._training(training_set)
+    L_p._training(training_set)
+    testing(DR_p, DT_p, L_p, './data/TEST/')
 
 if __name__ == '__main__':
     main()
