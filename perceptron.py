@@ -5,6 +5,7 @@ import pickle
 import os
 from collections import Counter
 from random import shuffle
+from random import random
 
 class perceptron():
 
@@ -24,7 +25,7 @@ class perceptron():
 		doc_freq = {}
 		for key in self.feature_set:
 			c = word_list.count(key)
-			doc_freq[key] = c
+			doc_freq[key] = c/num_words
 		return doc_freq
 
 
@@ -34,38 +35,49 @@ class perceptron():
 		"""
 		tot_false_neg = 0
 		tot_false_pos = 0
-		in_score = 0
+		
 		for i in range(100):
 			shuffle(training_set) #randomly shuffles the training set.  Should happen every iteration
 			iter_neg = 0
 			iter_pos = 0
 			for doc in training_set:
+				in_score = self.bias
 				#print(doc, self.doc_class)
 				doc_data = word_bag(doc[0])
 				freq = self._freqs(doc_data)
+				#print(freq)
 				for f in freq:
 					in_score += freq[f]*self.feature_set[f]
-				if in_score > 0 and doc[1] != self.doc_class: #false positive
+				if in_score >= 0 and doc[1] != self.doc_class: #false positive
 					#print('False positive')
 					tot_false_pos += 1
 					iter_pos += 1
 					self.bias += self.alpha*-1
-					for word in self.feature_set:
-						if freq[f] != 0: self.feature_set[word] += self.alpha*-1
-				elif in_score <= 0 and doc[1] == self.doc_class: #false negative
+					for word in self.feature_set: 
+						update = self.feature_set[word] + self.alpha*-1*freq[word]
+						self.feature_set[word] = update
+						#print(word, self.feature_set[word], freq)
+				elif in_score < 0 and doc[1] == self.doc_class: #false negative
 					#print('False negative')
 					tot_false_neg += 1
 					iter_neg += 1
 					self.bias += self.alpha*1
-					for word in self.feature_set:
-						if freq[f] != 0: self.feature_set[word] += self.alpha*1
+					for word in self.feature_set: 
+						update = self.feature_set[word] + self.alpha*1*freq[word]
+						self.feature_set[word] = update
+						#print(word, self.feature_set[word], freq[word])
+				
 			print('Done with iteration ', i)
 			print('Iteration false negative: ', iter_neg)
 			print('Iteration false positive: ', iter_pos)
 			print('Total false: ', iter_pos+iter_neg)
+			#print(self.feature_set)
 			self.alpha -= 0.001
 		print('Total false negatives: ', tot_false_neg)
 		print('Total false positives: ', tot_false_pos)
+
+	def testing(self,path):
+
 
 def word_bag(f_path):
 	"""
