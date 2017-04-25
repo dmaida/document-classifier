@@ -11,10 +11,10 @@ class perceptron():
 	def __init__(self, doc_class, feature_set):
 		self.doc_class = doc_class
 		self.feature_set = {}
-		self.bias = 1
+		self.bias = 0.5
 		self.alpha = 0.1
 		for word in feature_set:
-			self.feature_set[word] = 1
+			self.feature_set[word] = 0.5
 
 	def _freqs(self, word_list):
 		"""
@@ -24,7 +24,7 @@ class perceptron():
 		doc_freq = {}
 		for key in self.feature_set:
 			c = word_list.count(key)
-			doc_freq[key] = c/num_words
+			doc_freq[key] = c
 		return doc_freq
 
 
@@ -35,7 +35,7 @@ class perceptron():
 		tot_false_neg = 0
 		tot_false_pos = 0
 		in_score = 0
-		for i in range(10):
+		for i in range(100):
 			shuffle(training_set) #randomly shuffles the training set.  Should happen every iteration
 			iter_neg = 0
 			iter_pos = 0
@@ -95,9 +95,10 @@ def create_training_set():
 def main():
     path = 'data'
     documents = create_feature.create_naive_document_dictionaries_from_training_files(path)
-    features = list(dict.fromkeys(create_feature.create_boolean_feature_set(documents) ))
+    features = list(dict.fromkeys(create_feature.create_boolean_feature_set(documents,drop_short=True) ))
     training_set = create_training_set()
     print(len(training_set))
+    print(features)
     p = perceptron('DR',features) #DT perceptron
     p._training(training_set)
 

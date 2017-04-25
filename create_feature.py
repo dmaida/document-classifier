@@ -9,14 +9,14 @@ documentTypes = namedtuple('documentTypes', ['dr', 'dt','l'])
 """Creates a boolean bag of words feature set from the the three different classes of documents
 Documents is expect to have to dr, dt, and dt dictionary full their documents
 it then combines 20 most frequent words in each class, and removes duplicates to retun a set"""
-def create_boolean_feature_set(documents):
-	dr_freq, dt_freq, l_freq = get_frequency_from_training_documents(documents)
+def create_boolean_feature_set(documents,drop_short=False):
+	dr_freq, dt_freq, l_freq = get_frequency_from_training_documents(documents,drop_short)
 	#combines the lists
 	feature_words = [ x[0] for x in dr_freq ] + [ x[0] for x in dt_freq ] + [ x[0] for x in l_freq ]
 	#The set gets rid of duplicates, then it makes a dictionary for a bag for word
 	return set(feature_words)
 
-def get_frequency(document_dict):
+def get_frequency(document_dict,drop_short=False):
 	words = ''
 	for key in document_dict:
 		words += document_dict[key]
@@ -26,6 +26,10 @@ def get_frequency(document_dict):
 	frequency_list = list({w: c/total_num_words for w,c in word_dict.items()}.items())
 	#print(frequency_list)
 	sorted_freq_list = sorted(frequency_list, key=lambda x: x[1], reverse=True)
+	s_copy = sorted_freq_list.copy()
+	if drop_short:
+		for s in s_copy:
+			if len(s[0]) < 3: sorted_freq_list.remove(s)
 	return sorted_freq_list[0:20]
 
 def get_documents_from_folder(path):
@@ -56,10 +60,10 @@ def create_naive_document_dictionaries_from_training_files(base_path):
 		l_documents[f] = processing.processing(os.path.join(l_path,f))
 	return documentTypes(dr_documents, dt_documents, l_documents)
 
-def get_frequency_from_training_documents(processed_documents):
-	dr_freq = get_frequency(processed_documents.dr)
-	dt_freq = get_frequency(processed_documents.dt)
-	l_freq = get_frequency(processed_documents.l)
+def get_frequency_from_training_documents(processed_documents,drop_short=False):
+	dr_freq = get_frequency(processed_documents.dr,drop_short)
+	dt_freq = get_frequency(processed_documents.dt,drop_short)
+	l_freq = get_frequency(processed_documents.l,drop_short)
 	return [dr_freq, dt_freq, l_freq]
 
 def accuracy_of_results(results, answers_path):
