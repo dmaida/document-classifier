@@ -6,10 +6,9 @@ from collections import namedtuple
 
 documentTypes = namedtuple('documentTypes', ['dr', 'dt','l'])
 
-def naive_bayes(path):
+def naive_bayes(path, drop_short=False, drop_stop_words=False):
     documents = create_feature.create_naive_document_dictionaries_from_training_files(path)
-    features = dict.fromkeys(create_feature.create_boolean_feature_set(documents) )
-
+    features = dict.fromkeys(create_feature.create_boolean_feature_set(documents, drop_short, drop_stop_words) )
     dr_bag_of_words = create_boolean_bag_of_words(features, documents.dr)
     dt_bag_of_words = create_boolean_bag_of_words(features, documents.dt)
     l_bag_of_words = create_boolean_bag_of_words(features, documents.l)
@@ -80,8 +79,13 @@ if __name__ == '__main__':
     create_feature.get_frequency_from_training_documents(docDict)
     """
     #testing Comparing the two methods
+    print("-----------------------------\nOn normal data.")
     naive_bayes('data')
+    print("-----------------------------\nOn data with words less than 3 dropped")
+    naive_bayes('data', True)
     """documents = create_feature.create_naive_document_dictionaries_from_training_files('data')
     features = create_feature.create_boolean_feature_set(documents)
     print(features, len(features))"""
+    print("-----------------------------\nOn data without stop words")
+    naive_bayes('data', False, True)
     #main(sys.argv)

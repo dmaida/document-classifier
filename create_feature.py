@@ -3,20 +3,21 @@ import pickle
 import os
 import sys
 from collections import Counter, namedtuple
-
+# got the stop word list from python libary stop-words, manually adding it the program so we don't have another library dependency, and we only need the english words
+stop_words = ['a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and', 'any', 'are', "aren't", 'as', 'at', 'be', 'because', 'been', 'before', 'being', 'below', 'between', 'both', 'but', 'by', "can't", 'cannot', 'could', "couldn't", 'did', "didn't", 'do', 'does', "doesn't", 'doing', "don't", 'down', 'during', 'each', 'few', 'for', 'from', 'further', 'had', "hadn't", 'has', "hasn't", 'have', "haven't", 'having', 'he', "he'd", "he'll", "he's", 'her', 'here', "here's", 'hers', 'herself', 'him', 'himself', 'his', 'how', "how's", 'i', "i'd", "i'll", "i'm", "i've", 'if', 'in', 'into', 'is', "isn't", 'it', "it's", 'its', 'itself', "let's", 'me', 'more', 'most', "mustn't", 'my', 'myself', 'no', 'nor', 'not', 'of', 'off', 'on', 'once', 'only', 'or', 'other', 'ought', 'our', 'ours', 'ourselves', 'out', 'over', 'own', 'same', "shan't", 'she', "she'd", "she'll", "she's", 'should', "shouldn't", 'so', 'some', 'such', 'than', 'that', "that's", 'the', 'their', 'theirs', 'them', 'themselves', 'then', 'there', "there's", 'these', 'they', "they'd", "they'll", "they're", "they've", 'this', 'those', 'through', 'to', 'too', 'under', 'until', 'up', 'very', 'was', "wasn't", 'we', "we'd", "we'll", "we're", "we've", 'were', "weren't", 'what', "what's", 'when', "when's", 'where', "where's", 'which', 'while', 'who', "who's", 'whom', 'why', "why's", 'with', "won't", 'would', "wouldn't", 'you', "you'd", "you'll", "you're", "you've", 'your', 'yours', 'yourself', 'yourselves']
 documentTypes = namedtuple('documentTypes', ['dr', 'dt','l'])
 
 """Creates a boolean bag of words feature set from the the three different classes of documents
 Documents is expect to have to dr, dt, and dt dictionary full their documents
 it then combines 20 most frequent words in each class, and removes duplicates to retun a set"""
-def create_boolean_feature_set(documents,drop_short=False):
-	dr_freq, dt_freq, l_freq = get_frequency_from_training_documents(documents,drop_short)
+def create_boolean_feature_set(documents, drop_short=False, drop_stop_words=False):
+	dr_freq, dt_freq, l_freq = get_frequency_from_training_documents(documents,drop_short, drop_stop_words)
 	#combines the lists
 	feature_words = [ x[0] for x in dr_freq ] + [ x[0] for x in dt_freq ] + [ x[0] for x in l_freq ]
 	#The set gets rid of duplicates, then it makes a dictionary for a bag for word
 	return set(feature_words)
 
-def get_frequency(document_dict,drop_short=False):
+def get_frequency(document_dict,drop_short=False, drop_stop_words=False):
 	words = ''
 	for key in document_dict:
 		words += document_dict[key]
@@ -25,11 +26,15 @@ def get_frequency(document_dict,drop_short=False):
 	word_dict = dict(Counter(words))
 	frequency_list = list({w: c/total_num_words for w,c in word_dict.items()}.items())
 	#print(frequency_list)
+
 	sorted_freq_list = sorted(frequency_list, key=lambda x: x[1], reverse=True)
 	s_copy = sorted_freq_list.copy()
 	if drop_short:
 		for s in s_copy:
 			if len(s[0]) < 3: sorted_freq_list.remove(s)
+	if drop_stop_words:
+		for s in s_copy:
+			if s[0] in stop_words: sorted_freq_list.remove(s)
 	return sorted_freq_list[0:20]
 
 def get_documents_from_folder(path):
@@ -60,10 +65,10 @@ def create_naive_document_dictionaries_from_training_files(base_path):
 		l_documents[f] = processing.processing(os.path.join(l_path,f))
 	return documentTypes(dr_documents, dt_documents, l_documents)
 
-def get_frequency_from_training_documents(processed_documents,drop_short=False):
-	dr_freq = get_frequency(processed_documents.dr,drop_short)
-	dt_freq = get_frequency(processed_documents.dt,drop_short)
-	l_freq = get_frequency(processed_documents.l,drop_short)
+def get_frequency_from_training_documents(processed_documents,drop_short=False, drop_stop_words=False):
+	dr_freq = get_frequency(processed_documents.dr,drop_short, drop_stop_words)
+	dt_freq = get_frequency(processed_documents.dt,drop_short, drop_stop_words)
+	l_freq = get_frequency(processed_documents.l,drop_short, drop_stop_words)
 	return [dr_freq, dt_freq, l_freq]
 
 def accuracy_of_results(results, answers_path):
@@ -71,14 +76,22 @@ def accuracy_of_results(results, answers_path):
 	total = len(results)
 	correct = 0
 	wrong = 0
+	# creates a 3x3 for guess and answer grid
+	answerGrid = {'DT': {'DT':0, 'DR':0, 'L':0}, 'DR':{'DT':0, 'DR':0, 'L':0}, 'L': {'DT':0, 'DR':0, 'L':0}}
+
 	for line in f:
 		document, answer = line.split(',')
 		answer = answer.strip()
 		document = document.strip()
 		if answer == results[document]:
 			correct += 1
+		answerGrid[answer][results[document]] += 1
 	print("Correct: {} Wrong: {} Total: {}".format(correct, total - correct , total))
 	print("Precentage: {0:.5f}%".format(float(correct/total*100), "%") )
+	print("        	Guessed     ")
+	print('{0}	    {1}     {2}       {3}'.format('Correct', 'DT','DR','L') )
+	for key in answerGrid:
+		print('      {0}   {1:3d}   {2:4d}   {3:5d}'.format(key.rjust(2),answerGrid[key]['DT'], answerGrid[key]['DR'], answerGrid[key]['L']) )
 
 def main(argv):
 	if len(argv) != 2:
