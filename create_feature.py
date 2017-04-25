@@ -78,7 +78,7 @@ def accuracy_of_results(results, answers_path):
 		if answer == results[document]:
 			correct += 1
 	print("Correct: {} Wrong: {} Total: {}".format(correct, total - correct , total))
-	print("Precentage: {0:.5f}%".format(float(correct/total), "%") )
+	print("Precentage: {0:.5f}%".format(float(correct/total*100), "%") )
 
 def main(argv):
 	if len(argv) != 2:
