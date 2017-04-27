@@ -19,10 +19,7 @@ def naive_bayes(documents, test_docs, drop_short=False, drop_stop_words=False, n
         l_probability_bag_of_words = computing_multivariate_probability_of_words_given_class(documents.l, features)
     print(dr_probability_bag_of_words)
     total_num_of_training_docs = len(dr_probability_bag_of_words) + len(dt_probability_bag_of_words) + len(l_probability_bag_of_words)
-    """print("bag of words")
-    print("DR\n",dr_probability_bag_of_words)
-    print("DT\n",dt_probability_bag_of_words)
-    print("L\n",l_probability_bag_of_words)"""
+
     probability_of_dr = len(dr_probability_bag_of_words)/ total_num_of_training_docs
     probability_of_dt = len(dr_probability_bag_of_words)/ total_num_of_training_docs
     probability_of_l = len(dr_probability_bag_of_words) / total_num_of_training_docs
@@ -106,11 +103,16 @@ if __name__ == '__main__':
     #testing Comparing the two methods
     documents = create_feature.create_naive_document_dictionaries_from_training_files('data')
     test_docs = create_feature.get_documents_from_folder(os.path.join('data', 'TEST'))
+    correctedDocs = create_feature.create_naive_document_dictionaries_from_training_files('autocorrect_data', is_data_preprocessed=True)
+    correctedTestDocs = create_feature.get_documents_from_folder(os.path.join('autocorrect_data', 'TEST'), is_data_preprocessed=True)
     print("-----------------------------\nOn normal data.")
     naive_bayes(documents, test_docs)
+    print("-----------------------------\nOn auto Corrected data.")
+    naive_bayes(correctedDocs, correctedTestDocs)
+    """
     print("-----------------------------\nOn normal data with nomoil Data")
     naive_bayes(documents, test_docs, nomial_bag_of_words=True)
-    """
+
     print("-----------------------------\nOn data with words less than 3 dropped")
     naive_bayes(documents, test_docs, True)
     documents = create_feature.create_naive_document_dictionaries_from_training_files('data')

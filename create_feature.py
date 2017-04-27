@@ -17,7 +17,7 @@ def create_boolean_feature_set(documents, drop_short=False, drop_stop_words=Fals
 	#The set gets rid of duplicates, then it makes a dictionary for a bag for word
 	return set(feature_words)
 
-def get_frequency(document_dict,drop_short=False, drop_stop_words=False):
+def get_frequency(document_dict, drop_short=False, drop_stop_words=False):
 	words = ''
 	for key in document_dict:
 		words += document_dict[key]
@@ -37,15 +37,20 @@ def get_frequency(document_dict,drop_short=False, drop_stop_words=False):
 			if s[0] in stop_words: sorted_freq_list.remove(s)
 	return sorted_freq_list[0:20]
 
-def get_documents_from_folder(path):
+def get_documents_from_folder(path, is_data_preprocessed=False):
 	doc_files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
 	doc = {}
-	for f in doc_files:
-		doc[f] =  processing.processing(os.path.join(path,f))
+	if is_data_preprocessed:
+		for f in doc_files:
+			doc[f] =  processing.processing(os.path.join(path,f))
+	else:
+		for f in doc_files:
+			doc[f] =  processing.processing(os.path.join(path,f))
 	return doc
+
 """Creates a list of dictionaries for each type of doucment that's key is file name, and value is the processed text.
 It is returned in a tuple, where documents[0] = dr, documents[1] = dt, documents[2] = l """
-def create_naive_document_dictionaries_from_training_files(base_path):
+def create_naive_document_dictionaries_from_training_files(base_path, is_data_preprocessed=False):
 	dr_path = os.path.join(base_path,'DR')
 	dt_path = os.path.join(base_path, 'DT')
 	l_path = os.path.join(base_path, 'L')
@@ -57,14 +62,23 @@ def create_naive_document_dictionaries_from_training_files(base_path):
 	dr_documents = {}
 	dt_documents = {}
 	l_documents = {}
-	for f in dr_files:
-		dr_documents[f] = processing.processing(os.path.join(dr_path,f))
-	for f in dt_files:
-		dt_documents[f] = processing.processing(os.path.join(dt_path,f))
-	for f in l_files:
-		l_documents[f] = processing.processing(os.path.join(l_path,f))
+	if is_data_preprocessed:
+		for f in dr_files:
+			dr_documents[f] = processing.preprocessed_data(os.path.join(dr_path,f))
+		for f in dt_files:
+			dt_documents[f] = processing.preprocessed_data(os.path.join(dt_path,f))
+		for f in l_files:
+			l_documents[f] = processing.preprocessed_data(os.path.join(l_path,f))
+	else:
+		for f in dr_files:
+			dr_documents[f] = processing.processing(os.path.join(dr_path,f))
+		for f in dt_files:
+			dt_documents[f] = processing.processing(os.path.join(dt_path,f))
+		for f in l_files:
+			l_documents[f] = processing.processing(os.path.join(l_path,f))
 	return documentTypes(dr_documents, dt_documents, l_documents)
 
+	return documentTypes(dr_documents, dt_documents, l_documents)
 def get_frequency_from_training_documents(processed_documents,drop_short=False, drop_stop_words=False):
 	dr_freq = get_frequency(processed_documents.dr,drop_short, drop_stop_words)
 	dt_freq = get_frequency(processed_documents.dt,drop_short, drop_stop_words)
