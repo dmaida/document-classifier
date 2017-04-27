@@ -1,5 +1,7 @@
 import processing
 import create_feature
+import re
+import random
 from collections import Counter
 import sys
 
@@ -8,6 +10,8 @@ def search(d):
 	Search method for classifying a document based on number of times
 	a phrase appears
 	"""
+
+	my_dict = {}
 
 	for document in d:
 		list_of_words = processing.processing(document)
@@ -27,17 +31,27 @@ def search(d):
 			dr_freq = word_dict["reconveyance"]
 
 		if dt_freq > l_freq and dt_freq > dr_freq:
-			print (document + ": " + "Deed of Trust\n")
+			my_dict[re.sub('(.)*(\/)+','',document)] = "DT"
+			#print (document + ": 	" + "Deed of Trust\n")
 
-		if dr_freq > l_freq and dr_freq > dt_freq:
-			print (document + ": " + "Deed of Reconveyance\n")
+		elif dr_freq > l_freq and dr_freq > dt_freq:
+			my_dict[re.sub('(.)*(\/)+','',document)] = "DR"
+			#print (document + ": " + "Deed of Reconveyance\n")
 
-		if l_freq > dt_freq and l_freq > dr_freq:
-			print (document + ": " + "Lien\n")
+		elif l_freq > dt_freq and l_freq > dr_freq:
+			my_dict[re.sub('(.)*(\/)+','',document)] = "L"
+			#print (document + ": " + "Lien\n")
+
+		else:
+			choices = ['DT', 'DR', 'L']
+			my_dict[re.sub('(.)*(\/)+','',document)] = random.choice(choices)
 
 
 
 		list_of_words = None
+
+	#print (my_dict)
+	create_feature.accuracy_of_results(my_dict, "data/test-results.txt")
 
 
 
