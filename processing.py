@@ -1,7 +1,6 @@
 import re
 import sys
 import enchant
-from enchant.checker import SpellChecker
 
 def processing(f_in):
 	"""
@@ -18,9 +17,18 @@ def processing(f_in):
 	#print(input_string)
 	return input_string
 
+def preprocessed_data(f_in):
+	"""
+	Method to read in already processed data
+	for time efficiency.
+	"""
+	f_in = open(f_in, 'r')
+	input_string = f_in.read()
+	return input_string
+
+
 def processing_with_autocorrect(f_in):
 	"""
-
 	Processing with spell checking.
 
     Spell checking function that autocorrects
@@ -32,7 +40,6 @@ def processing_with_autocorrect(f_in):
 	1) puts all letters in lowercase
 	2) removes all non ascii characters and replaces them with spaces
 	3) compresses all spaces to a single space
-
     """
 	f_in = open(f_in, 'r')
 	input_string = f_in.read() #read in
@@ -51,7 +58,6 @@ def processing_with_autocorrect(f_in):
 	processed_string = processed_string.lower() #to lower case
 	processed_string = re.sub("[^0-9a-z]+", ' ', processed_string)
 	processed_string = re.sub('\s+', ' ', processed_string).strip() #compresses spaces
-	print(processed_string)
 	return processed_string
 
 def main(argv):
