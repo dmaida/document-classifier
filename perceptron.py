@@ -13,13 +13,13 @@ class perceptron():
 		self.doc_class = doc_class
 		self.feature_set = {}
 		self.bias = 0.5
-		self.alpha = 0.1
+		self.alpha = 0.15
 		for word in feature_set:
 			self.feature_set[word] = 0.5
 
 	def _freqs(self, word_list):
 		"""
-		Returns a dictionary of frequencies mapped to each word in the training set 
+		Returns a dictionary of frequencies mapped to each word in the training set
 		"""
 		num_words = len(word_list)
 		doc_freq = {}
@@ -38,16 +38,19 @@ class perceptron():
 		"""
 		tot_false_neg = 0
 		tot_false_pos = 0
-		
-		for i in range(100):
+		word_bag_dict = {}
+		for doc in training_set:
+			word_bag_dict[doc[0]] = self._freqs(word_bag(doc[0]))
+		for i in range(150):
 			shuffle(training_set) #randomly shuffles the training set.  Should happen every iteration
 			iter_neg = 0
 			iter_pos = 0
 			for doc in training_set:
 				in_score = self.bias
 				#print(doc, self.doc_class)
-				doc_data = word_bag(doc[0])
-				freq = self._freqs(doc_data)
+
+				freq = word_bag_dict[doc[0]]
+
 				#print(freq)
 				for f in freq:
 					in_score += freq[f]*self.feature_set[f]
@@ -56,7 +59,7 @@ class perceptron():
 					tot_false_pos += 1
 					iter_pos += 1
 					self.bias += self.alpha*-1
-					for word in self.feature_set: 
+					for word in self.feature_set:
 						update = self.feature_set[word] + self.alpha*-1*freq[word]
 						self.feature_set[word] = update
 						#print(word, self.feature_set[word], freq)
@@ -65,11 +68,11 @@ class perceptron():
 					tot_false_neg += 1
 					iter_neg += 1
 					self.bias += self.alpha*1
-					for word in self.feature_set: 
+					for word in self.feature_set:
 						update = self.feature_set[word] + self.alpha*1*freq[word]
 						self.feature_set[word] = update
 						#print(word, self.feature_set[word], freq[word])
-				
+
 			print('Done with iteration ', i)
 			print('Iteration false negative: ', iter_neg)
 			print('Iteration false positive: ', iter_pos)
@@ -79,23 +82,23 @@ class perceptron():
 		print('Total false negatives: ', tot_false_neg)
 		print('Total false positives: ', tot_false_pos)
 
-	
+
 
 def word_bag(f_path):
 	"""
 	Creates "bag of words" over a given document
 	"""
-	raw_data = processing.processing(f_path)	
+	raw_data = processing.processing(f_path)
 	data_list = raw_data.split()
 	return data_list
 
-	
+
 def create_training_set():
 	base_path = 'data'
 	dr_path = os.path.join(base_path,'DR')
 	dt_path = os.path.join(base_path, 'DT')
 	l_path = os.path.join(base_path, 'L')
-	
+
 	training_list = []
 	for f in os.listdir(dr_path):
 		training_list.append((os.path.join(dr_path, f), 'DR'))
@@ -103,7 +106,7 @@ def create_training_set():
 		training_list.append((os.path.join(dt_path, f), 'DT'))
 	for f in os.listdir(l_path):
 		training_list.append((os.path.join(l_path, f), 'L'))
-		
+
 	return training_list
 
 def testing(DR_p, DT_p, L_p,path):
