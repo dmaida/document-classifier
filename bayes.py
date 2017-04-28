@@ -103,8 +103,8 @@ if __name__ == '__main__':
     #testing Comparing the two methods
     documents = create_feature.create_naive_document_dictionaries_from_training_files('data')
     test_docs = create_feature.get_documents_from_folder(os.path.join('data', 'TEST'))
-    correctedDocs = create_feature.create_naive_document_dictionaries_from_training_files('autocorrect_data', is_data_preprocessed=True)
-    correctedTestDocs = create_feature.get_documents_from_folder(os.path.join('autocorrect_data', 'TEST'), is_data_preprocessed=True)
+    correctedDocs = create_feature.create_naive_document_dictionaries_from_training_files('data', is_data_preprocessed=True)
+    correctedTestDocs = create_feature.get_documents_from_folder(os.path.join('data', 'TEST'), is_data_preprocessed=True)
     print("-----------------------------\nOn normal data.")
     naive_bayes(documents, test_docs)
     print("-----------------------------\nOn auto Corrected data.")
