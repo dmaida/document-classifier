@@ -32,34 +32,33 @@ def search(d):
 			dr_freq = word_dict["reconveyance"]
 
 		if dt_freq > l_freq and dt_freq > dr_freq:
-			my_dict[re.sub('(.)*(\/)+','',document)] = "DT"
+			my_dict[document] = "DT"
 			#print (document + ": 	" + "Deed of Trust\n")
 
 		elif dr_freq > l_freq and dr_freq > dt_freq:
-			my_dict[re.sub('(.)*(\/)+','',document)] = "DR"
+			my_dict[document] = "DR"
 			#print (document + ": " + "Deed of Reconveyance\n")
 
 		elif l_freq > dt_freq and l_freq > dr_freq:
-			my_dict[re.sub('(.)*(\/)+','',document)] = "L"
+			my_dict[document] = "L"
 			#print (document + ": " + "Lien\n")
 
 		else:
 			choices = ['DT', 'DR', 'L']
-			my_dict[re.sub('(.)*(\/)+','',document)] = random.choice(choices)
+			my_dict[document] = random.choice(choices)
 
 
 
 		list_of_words = None
 
 	#print (my_dict)
-	#create_feature.accuracy_of_results(my_dict, "data/test-results.txt")
+	create_feature.accuracy_of_results(my_dict, "data/test-results.txt")
 	return my_dict
 
 
 
 def main(argv):
-	# run bash$ python3 grep.py path/*
-	search(argv)
+	search(argv[1])
 
 if __name__ == '__main__':
 	main(sys.argv)
