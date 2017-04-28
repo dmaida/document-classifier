@@ -33,8 +33,9 @@ def get_frequency(document_dict, drop_short=False, drop_stop_words=False):
 	if drop_short:
 		for s in s_copy:
 			if len(s[0]) < 3: sorted_freq_list.remove(s)
+	s_copy = sorted_freq_list.copy()
 	if drop_stop_words:
-		for s in sorted_freq_list:
+		for s in s_copy:
 			if s[0] in stop_words: sorted_freq_list.remove(s)
 	return sorted_freq_list[0:20]
 
@@ -43,7 +44,7 @@ def get_documents_from_folder(path, is_data_preprocessed=False):
 	doc = {}
 	if is_data_preprocessed:
 		for f in doc_files:
-			doc[f] =  processing.processing(os.path.join(path,f))
+			doc[f] =  processing.preprocessed_data(os.path.join(path,f))
 	else:
 		for f in doc_files:
 			doc[f] =  processing.processing(os.path.join(path,f))
@@ -101,7 +102,8 @@ def accuracy_of_results(results, answers_path, printTable=False):
 		if answer == results[document]:
 			correct += 1
 		answerGrid[answer][results[document]] += 1
-
+	print("Correct: {} Wrong: {} Total: {}".format(correct, total - correct , total))
+	print("Precentage: {0:.5f}%".format(float(correct/total*100), "%") )
 	#Prints Latex formated data
 	if printTable:
 		print("Latex Tables")
@@ -111,8 +113,6 @@ def accuracy_of_results(results, answers_path, printTable=False):
 		print (tabulate(tableList, headers=['DT','DR','L'], tablefmt="latex") )
 		print( tabulate([ ["Correct: ", correct], ['Wrong:', total - correct], ['Total', total], ['Percentage:', "{0:.3f}%".format(float(correct/total*100))] ], tablefmt="latex") )
 	else:
-		print("Correct: {} Wrong: {} Total: {}".format(correct, total - correct , total))
-		print("Precentage: {0:.5f}%".format(float(correct/total*100), "%") )
 		print("		   Guessed")
 		print('{0}	    {1}     {2}       {3}'.format('Correct', 'DT','DR','L') )
 		for key in answerGrid:
