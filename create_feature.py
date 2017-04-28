@@ -34,7 +34,7 @@ def get_frequency(document_dict, drop_short=False, drop_stop_words=False):
 		for s in s_copy:
 			if len(s[0]) < 3: sorted_freq_list.remove(s)
 	if drop_stop_words:
-		for s in s_copy:
+		for s in sorted_freq_list:
 			if s[0] in stop_words: sorted_freq_list.remove(s)
 	return sorted_freq_list[0:20]
 
@@ -86,7 +86,7 @@ def get_frequency_from_training_documents(processed_documents,drop_short=False, 
 	l_freq = get_frequency(processed_documents.l,drop_short, drop_stop_words)
 	return [dr_freq, dt_freq, l_freq]
 
-def accuracy_of_results(results, answers_path):
+def accuracy_of_results(results, answers_path, printTable=False):
 	f = open(answers_path, 'r')
 	total = len(results)
 	correct = 0
@@ -101,19 +101,22 @@ def accuracy_of_results(results, answers_path):
 		if answer == results[document]:
 			correct += 1
 		answerGrid[answer][results[document]] += 1
-	print("Correct: {} Wrong: {} Total: {}".format(correct, total - correct , total))
-	print("Precentage: {0:.5f}%".format(float(correct/total*100), "%") )
-	#print('{0}	    {1}     {2}       {3}'.format('Correct', 'DT','DR','L') )
-	#for key in answerGrid:
-	#	print('      {0}   {1:3d}   {2:4d}   {3:5d}'.format(key.rjust(2),answerGrid[key]['DT'], answerGrid[key]['DR'], answerGrid[key]['L']) )
-	#Prints Latex formated data
-	print("Latex Tables")
-	tableList = []
-	for key in answerGrid:
-		tableList.append([key, answerGrid[key]['DT'], answerGrid[key]['DR'], answerGrid[key]['L']])
-	print (tabulate(tableList, headers=['DT','DR','L'], tablefmt="latex") )
-	print( tabulate([ ["Correct: ", correct], ['Wrong:', total - correct], ['Total', total], ['Percentage:', "{0:.3f}%".format(float(correct/total*100))] ], tablefmt="latex") )
 
+	#Prints Latex formated data
+	if printTable:
+		print("Latex Tables")
+		tableList = []
+		for key in answerGrid:
+			tableList.append([key, answerGrid[key]['DT'], answerGrid[key]['DR'], answerGrid[key]['L']])
+		print (tabulate(tableList, headers=['DT','DR','L'], tablefmt="latex") )
+		print( tabulate([ ["Correct: ", correct], ['Wrong:', total - correct], ['Total', total], ['Percentage:', "{0:.3f}%".format(float(correct/total*100))] ], tablefmt="latex") )
+	else:
+		print("Correct: {} Wrong: {} Total: {}".format(correct, total - correct , total))
+		print("Precentage: {0:.5f}%".format(float(correct/total*100), "%") )
+		print("		   Guessed")
+		print('{0}	    {1}     {2}       {3}'.format('Correct', 'DT','DR','L') )
+		for key in answerGrid:
+			print('      {0}   {1:3d}   {2:4d}   {3:5d}'.format(key.rjust(2),answerGrid[key]['DT'], answerGrid[key]['DR'], answerGrid[key]['L']) )
 def main(argv):
 	if len(argv) != 2:
 		base_path = 'data'

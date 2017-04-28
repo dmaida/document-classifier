@@ -1,6 +1,6 @@
 import re
 import sys
-import enchant
+#import enchant
 
 def processing(f_in):
 	"""
