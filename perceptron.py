@@ -13,7 +13,7 @@ class perceptron():
 		self.doc_class = doc_class
 		self.feature_set = {}
 		self.bias = 0.5
-		self.alpha = 0.1
+		self.alpha = 0.15
 		for word in feature_set:
 			self.feature_set[word] = 0.5
 
@@ -38,7 +38,9 @@ class perceptron():
 		"""
 		tot_false_neg = 0
 		tot_false_pos = 0
-		
+		word_bag_dict = {}
+		for doc in training_set:
+			word_bag_dict[doc[0]] = self._freqs(word_bag(doc[0])) 
 		for i in range(100):
 			shuffle(training_set) #randomly shuffles the training set.  Should happen every iteration
 			iter_neg = 0
@@ -46,8 +48,9 @@ class perceptron():
 			for doc in training_set:
 				in_score = self.bias
 				#print(doc, self.doc_class)
-				doc_data = word_bag(doc[0])
-				freq = self._freqs(doc_data)
+				
+				freq = word_bag_dict[doc[0]]
+				
 				#print(freq)
 				for f in freq:
 					in_score += freq[f]*self.feature_set[f]
