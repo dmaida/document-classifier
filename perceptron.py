@@ -73,14 +73,14 @@ class perceptron():
 						self.feature_set[word] = update
 						#print(word, self.feature_set[word], freq[word])
 
-			print('Done with iteration ', i)
-			print('Iteration false negative: ', iter_neg)
-			print('Iteration false positive: ', iter_pos)
-			print('Total false: ', iter_pos+iter_neg)
+			#print('Done with iteration ', i)
+			#print('Iteration false negative: ', iter_neg)
+			#print('Iteration false positive: ', iter_pos)
+			#print('Total false: ', iter_pos+iter_neg)
 			#print(self.feature_set)
 			self.alpha -= 0.001
-		print('Total false negatives: ', tot_false_neg)
-		print('Total false positives: ', tot_false_pos)
+		#print('Total false negatives: ', tot_false_neg)
+		#print('Total false positives: ', tot_false_pos)
 
 
 
@@ -128,8 +128,9 @@ def testing(DR_p, DT_p, L_p,path):
 			if L_score >= 0: result_list.append('L')
 			if len(result_list) == 0: result_list = ['DR', 'DT', 'L']
 			result_dict[f] = random.choice(result_list)
-		print(result_dict)
-		create_feature.accuracy_of_results(result_dict,'./data/test-results.txt')
+		#print(result_dict)
+		#create_feature.accuracy_of_results(result_dict,'./data/test-results.txt')
+		return result_dict
 
 def main():
     path = 'data'

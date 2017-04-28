@@ -4,6 +4,7 @@ import re
 import random
 from collections import Counter
 import sys
+import os
 
 def search(d):
 	"""
@@ -13,8 +14,8 @@ def search(d):
 
 	my_dict = {}
 
-	for document in d:
-		list_of_words = processing.processing(document)
+	for document in os.listdir(d):
+		list_of_words = processing.processing(os.path.join(d,document))
 		list_of_words = list_of_words.split()
 		total_num_words = len(list_of_words)
 		word_dict = dict(Counter(list_of_words))
@@ -51,7 +52,8 @@ def search(d):
 		list_of_words = None
 
 	#print (my_dict)
-	create_feature.accuracy_of_results(my_dict, "data/test-results.txt")
+	#create_feature.accuracy_of_results(my_dict, "data/test-results.txt")
+	return my_dict
 
 
 

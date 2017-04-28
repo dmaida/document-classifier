@@ -9,7 +9,7 @@ documentTypes = namedtuple('documentTypes', ['dr', 'dt','l'])
 
 def naive_bayes(documents, test_docs, drop_short=False, drop_stop_words=False, nomial_bag_of_words=False):
     features = dict.fromkeys(create_feature.create_boolean_feature_set(documents, drop_short, drop_stop_words) )
-    print("Lenthg: ", len(features), features.keys())
+    #print("Lenthg: ", len(features), features.keys())
     if(nomial_bag_of_words):
         dr_probability_bag_of_words = computing_multinomial_probability_of_words_given_class(documents.dr, features)
         dt_probability_bag_of_words = computing_multinomial_probability_of_words_given_class(documents.dt, features)
@@ -34,7 +34,7 @@ def naive_bayes(documents, test_docs, drop_short=False, drop_stop_words=False, n
         doc_given_class = [[compute_probablity_of_doc_given_class(doc_bag_of_words, dr_probability_bag_of_words, nomial_bag_of_words), "DR"], [compute_probablity_of_doc_given_class(doc_bag_of_words, dt_probability_bag_of_words, nomial_bag_of_words), "DT"], [compute_probablity_of_doc_given_class(doc_bag_of_words, l_probability_bag_of_words, nomial_bag_of_words), "L"] ]
         results[doc] = max( doc_given_class)[1]
         #print(doc,results[doc])
-    create_feature.accuracy_of_results(results, "data/test-results.txt", True)
+    #create_feature.accuracy_of_results(results, "data/test-results.txt", True)
     return results
 
 def compute_bag_of_words_for_document(document_str, features, nomial_bag_of_words=False):
