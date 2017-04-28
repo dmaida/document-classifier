@@ -9,6 +9,7 @@ documentTypes = namedtuple('documentTypes', ['dr', 'dt','l'])
 
 def naive_bayes(documents, test_docs, drop_short=False, drop_stop_words=False, nomial_bag_of_words=False):
     features = dict.fromkeys(create_feature.create_boolean_feature_set(documents, drop_short, drop_stop_words) )
+    print("Lenthg: ", len(features), features.keys())
     if(nomial_bag_of_words):
         dr_probability_bag_of_words = computing_multinomial_probability_of_words_given_class(documents.dr, features)
         dt_probability_bag_of_words = computing_multinomial_probability_of_words_given_class(documents.dt, features)
@@ -29,26 +30,31 @@ def naive_bayes(documents, test_docs, drop_short=False, drop_stop_words=False, n
     results = {}
     for doc in test_docs:
         #makes a list of all the probability of the document begin a given class, and the classe's name
-        doc_given_class = [[compute_probablity_of_doc_given_class(test_docs[doc], dr_probability_bag_of_words, nomial_bag_of_words), "DR"], [compute_probablity_of_doc_given_class(test_docs[doc], dt_probability_bag_of_words, nomial_bag_of_words), "DT"], [compute_probablity_of_doc_given_class(test_docs[doc], l_probability_bag_of_words, nomial_bag_of_words), "L"] ]
+        doc_bag_of_words = compute_bag_of_words_for_document(test_docs[doc], features, nomial_bag_of_words)
+        doc_given_class = [[compute_probablity_of_doc_given_class(doc_bag_of_words, dr_probability_bag_of_words, nomial_bag_of_words), "DR"], [compute_probablity_of_doc_given_class(doc_bag_of_words, dt_probability_bag_of_words, nomial_bag_of_words), "DT"], [compute_probablity_of_doc_given_class(doc_bag_of_words, l_probability_bag_of_words, nomial_bag_of_words), "L"] ]
         results[doc] = max( doc_given_class)[1]
         #print(doc,results[doc])
-    create_feature.accuracy_of_results(results, "data/test-results.txt", False)
+    create_feature.accuracy_of_results(results, "data/test-results.txt", True)
+    return results
 
-
-def compute_probablity_of_doc_given_class(document_str, class_probabilties, nomial_bag_of_words=False):
-    #first fill the bag of words if needed
+def compute_bag_of_words_for_document(document_str, features, nomial_bag_of_words=False):
     bag_of_words = {}
     if nomial_bag_of_words:
-        for word in class_probabilties.keys():
+        for word in features.keys():
             bag_of_words[word] = document_str.count(word)
+    else:
+        for word in features.keys():
+            bag_of_words[word] = word in document_str
+    return bag_of_words
+def compute_probablity_of_doc_given_class(bag_of_words, class_probabilties, nomial_bag_of_words=False):
+    #first fill the bag of words if needed
+    if nomial_bag_of_words:
         log_sum = 0
         for word, word_count in bag_of_words.items():
             #if word count isn't there then it will multiply by 0, thus not add to the probability
             if word_count != 0:
                 log_sum += math.log(class_probabilties[word])*word_count
     else:
-        for word in class_probabilties.keys():
-            bag_of_words[word] = word in document_str
         log_sum = 0
         for word, word_is_there in bag_of_words.items():
             if word_is_there:
@@ -126,6 +132,7 @@ if __name__ == '__main__':
     naive_bayes(documents, test_docs, True, True)
     #print("-----------------------------\nOn auto Corrected data.")
     #naive_bayes(correctedDocs, correctedTestDocs)
+    """
     print("-----------------------------\nNomial normal data.")
     naive_bayes(documents, test_docs, nomial_bag_of_words=True)
     print("-----------------------------\nNomial data with words less than 3 dropped")
@@ -134,14 +141,16 @@ if __name__ == '__main__':
     naive_bayes(documents, test_docs, False, True, nomial_bag_of_words=True)
     print("-----------------------------\nNomial data without stop words and words less than 3 dropped")
     naive_bayes(documents, test_docs, True, True, nomial_bag_of_words=True)
-    """
+    print("--------------------------------------------------------------------------------------------------------\nAutoCorrected Data")
+    naive_bayes(correctedDocs, correctedTestDocs)
+    
     print("-----------------------------\nOn autocorrected")
     naive_bayes(correctedDocs, correctedTestDocs)
     #print("-----------------------------\nOn normal data with nomoil Data")
     #naive_bayes(documents, test_docs, nomial_bag_of_words=True)
-    """
+
     print("----------------------------------------------------------\n normal data.")
     #naive_bayes(documents, test_docs)
     print("----------------------------------------------------------\nOn normal data.")
     naive_bayes(documents, test_docs, nomial_bag_of_words=True)
-    #main(sys.argv)
+    """
