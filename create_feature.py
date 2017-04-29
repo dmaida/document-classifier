@@ -86,8 +86,7 @@ def create_naive_document_dictionaries_from_training_files(base_path, is_data_pr
 			l_documents[f] = processing.processing(os.path.join(l_path,f))
 	return documentTypes(dr_documents, dt_documents, l_documents)
 
-	return documentTypes(dr_documents, dt_documents, l_documents)
-def get_frequency_from_training_documents(processed_documents,drop_short=False, drop_stop_words=False, common_word = False):
+def get_frequency_from_training_documents(processed_documents,drop_short=False, drop_stop_words=False, common_word=False):
 
 	if common_word:
 		print("Going to take out the common words")
@@ -150,6 +149,7 @@ def accuracy_of_results(results, answers_path, printTable=False):
 		print('{0}	    {1}     {2}       {3}'.format('Correct', 'DT','DR','L') )
 		for key in answerGrid:
 			print('      {0}   {1:3d}   {2:4d}   {3:5d}'.format(key.rjust(2),answerGrid[key]['DT'], answerGrid[key]['DR'], answerGrid[key]['L']) )
+	return float(correct/total*100)
 
 
 def main(argv):

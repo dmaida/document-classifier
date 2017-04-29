@@ -7,9 +7,9 @@ import time
 
 documentTypes = namedtuple('documentTypes', ['dr', 'dt','l'])
 
-def naive_bayes(documents, test_docs, drop_short=False, drop_stop_words=False, nomial_bag_of_words=False):
-    features = dict.fromkeys(create_feature.create_boolean_feature_set(documents, drop_short, drop_stop_words) )
-    #print("Lenthg: ", len(features), features.keys())
+def naive_bayes(documents, test_docs, drop_short=False, drop_stop_words=False, nomial_bag_of_words=False, drop_common_words=False):
+    features = dict.fromkeys(create_feature.create_boolean_feature_set(documents, drop_short, drop_stop_words, drop_common_words) )
+    print("Lenthg: ", len(features), features.keys())
     if(nomial_bag_of_words):
         dr_probability_bag_of_words = computing_multinomial_probability_of_words_given_class(documents.dr, features)
         dt_probability_bag_of_words = computing_multinomial_probability_of_words_given_class(documents.dt, features)
@@ -34,7 +34,7 @@ def naive_bayes(documents, test_docs, drop_short=False, drop_stop_words=False, n
         doc_given_class = [[compute_probablity_of_doc_given_class(doc_bag_of_words, dr_probability_bag_of_words, nomial_bag_of_words), "DR"], [compute_probablity_of_doc_given_class(doc_bag_of_words, dt_probability_bag_of_words, nomial_bag_of_words), "DT"], [compute_probablity_of_doc_given_class(doc_bag_of_words, l_probability_bag_of_words, nomial_bag_of_words), "L"] ]
         results[doc] = max( doc_given_class)[1]
         #print(doc,results[doc])
-    #create_feature.accuracy_of_results(results, "data/test-results.txt", True)
+    create_feature.accuracy_of_results(results, "data/test-results.txt", True)
     return results
 
 def compute_bag_of_words_for_document(document_str, features, nomial_bag_of_words=False):
@@ -66,13 +66,13 @@ def compute_probablity_of_doc_given_class(bag_of_words, class_probabilties, nomi
 def computing_multinomial_probability_of_words_given_class(documents, features):
     bag_of_words = create_nomial_bag_of_words(features, documents)
     total_words = 2
-    P_w_given_c = dict.fromkeys(features.keys(), 0)
+    P_w_given_c = dict.fromkeys(features.keys(), 1)
     for doc in bag_of_words:
         for word in bag_of_words[doc]:
             P_w_given_c[word] += bag_of_words[doc][word]
             total_words += bag_of_words[doc][word]
     for word in P_w_given_c:
-            P_w_given_c[word] = (P_w_given_c[word] + 1) / total_words
+            P_w_given_c[word] = (P_w_given_c[word]) / total_words
     return P_w_given_c
 
 def computing_multivariate_probability_of_words_given_class(documents, features):
@@ -120,10 +120,12 @@ if __name__ == '__main__':
     documents = create_feature.create_naive_document_dictionaries_from_training_files('data')
     test_docs = create_feature.get_documents_from_folder(os.path.join('data', 'TEST'))
 
-    correctedDocs = create_feature.create_naive_document_dictionaries_from_training_files('autocorrect_data', is_data_preprocessed=True)
-    correctedTestDocs = create_feature.get_documents_from_folder(os.path.join('autocorrect_data', 'TEST'), is_data_preprocessed=True)
-    print("-----------------------------\nOn normal data.")
-    naive_bayes(documents, test_docs)
+    #correctedDocs = create_feature.create_naive_document_dictionaries_from_training_files('autocorrect_data', is_data_preprocessed=True)
+    #correctedTestDocs = create_feature.get_documents_from_folder(os.path.join('autocorrect_data', 'TEST'), is_data_preprocessed=True)
+
+    print("-----------------------------\nOn dropping common words data.")
+    naive_bayes(documents, test_docs, nomial_bag_of_words=True)
+    """
     print("-----------------------------\nOn data with words less than 3 dropped")
     naive_bayes(documents, test_docs, True)
     print("-----------------------------\nOn data without stop words")
@@ -132,7 +134,7 @@ if __name__ == '__main__':
     naive_bayes(documents, test_docs, True, True)
     #print("-----------------------------\nOn auto Corrected data.")
     #naive_bayes(correctedDocs, correctedTestDocs)
-    """
+    """ """
     print("-----------------------------\nNomial normal data.")
     naive_bayes(documents, test_docs, nomial_bag_of_words=True)
     print("-----------------------------\nNomial data with words less than 3 dropped")
@@ -143,14 +145,9 @@ if __name__ == '__main__':
     naive_bayes(documents, test_docs, True, True, nomial_bag_of_words=True)
     print("--------------------------------------------------------------------------------------------------------\nAutoCorrected Data")
     naive_bayes(correctedDocs, correctedTestDocs)
-    
+
     print("-----------------------------\nOn autocorrected")
     naive_bayes(correctedDocs, correctedTestDocs)
+    """
     #print("-----------------------------\nOn normal data with nomoil Data")
     #naive_bayes(documents, test_docs, nomial_bag_of_words=True)
-
-    print("----------------------------------------------------------\n normal data.")
-    #naive_bayes(documents, test_docs)
-    print("----------------------------------------------------------\nOn normal data.")
-    naive_bayes(documents, test_docs, nomial_bag_of_words=True)
-    """

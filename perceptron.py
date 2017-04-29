@@ -129,8 +129,19 @@ def testing(DR_p, DT_p, L_p,path):
 			if len(result_list) == 0: result_list = ['DR', 'DT', 'L']
 			result_dict[f] = random.choice(result_list)
 		#print(result_dict)
-		#create_feature.accuracy_of_results(result_dict,'./data/test-results.txt')
+		#return create_feature.accuracy_of_results(result_dict,'./data/test-results.txt', True)
 		return result_dict
+def perceptron_classify(documents, path, drop_short=False, drop_stop_words=False, drop_common_words=False):
+    features = list(dict.fromkeys(create_feature.create_boolean_feature_set(documents,drop_short=True) ))
+    training_set = create_training_set()
+    DR_p = perceptron('DR',features) #DR perceptron
+    DT_p = perceptron('DT',features)
+    L_p = perceptron('L',features)
+    DR_p._training(training_set)
+    DT_p._training(training_set)
+    L_p._training(training_set)
+    return testing(DR_p, DT_p, L_p, os.path.join(path,'TEST'))
+
 
 def main():
     path = 'data'
@@ -148,4 +159,30 @@ def main():
     testing(DR_p, DT_p, L_p, './data/TEST/')
 
 if __name__ == '__main__':
-    main()
+	#main()
+	documents = create_feature.create_naive_document_dictionaries_from_training_files('autocorrect_data')
+	print('Normal Perceptron-------------------------------------------------')
+	avg = []
+	print('\n\ndocuments Drop short and stop Perceptron-------------------------------------------------')
+	for i in range(1, 10):
+		avg.append(perceptron_classify(documents, 'data', drop_short=True, drop_stop_words=True))
+	print(sum(avg) / len(avg))
+	avg = []
+	print('documents Drop short and stop Perceptron-------------------------------------------------')
+	print('\n\ndocuments Drop common words and stop-words Perceptron-------------------------------------------------')
+	for i in range(1, 10):
+		avg.append(perceptron_classify(documents, 'data', drop_common_words=True, drop_stop_words=True))
+	print(sum(avg) / len(avg))
+	print('documents Drop common words and stop-words Perceptron-------------------------------------------------')
+	avg = []
+	print('\n\ndocuments Drop common words,  and short Perceptron-------------------------------------------------')
+	for i in range(1, 10):
+		avg.append(perceptron_classify(documents, 'data', drop_common_words=True, drop_short=True))
+	print(sum(avg) / len(avg))
+	print('documents Drop common words,  and short Perceptron-------------------------------------------------')
+	avg = []
+	print('\n\ndocuments Drop common words, stop-words, and short Perceptron-------------------------------------------------')
+	for i in range(1, 10):
+		avg.append(perceptron_classify(documents, 'data', drop_common_words=True, drop_stop_words=True, drop_short=True))
+	print(sum(avg) / len(avg))
+	print('documents Drop common words, stop-words, and short Perceptron-------------------------------------------------')
