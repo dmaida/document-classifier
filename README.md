@@ -15,7 +15,7 @@ file runs all three different as the initial implementation as well as multiple 
 the added "improvements". After the main completes, it writes to a file called output.txt
 in the current directory that will a list of output in the form:
 
-<Implementation>,<Original File Name>.txt,<Class>
+<Implementation_Description>,<Original File Name>.txt,<Classification>
 
 ### Things to Note:
 
@@ -23,7 +23,7 @@ in the current directory that will a list of output in the form:
 arguements as the main.py listed above. grep.py MUST take the final test directory 
 (e.g. python3 grep.py ./data/TEST/)
 
-2) With our auto corrected improvement. Due to the inefficiency of this method (3+ hr. runtime)
+2) With our auto corrected improvement, due to the inefficiency of this method (3+ hr. runtime)
 we have excluded that from the default improvements to run in main.py. We have included a directory
 with the initial data autocorrect and you may simply give that as an arguement. It was too much
 effort for too little reward to automate it.

@@ -3,7 +3,7 @@ import pickle
 import os
 import sys
 from collections import Counter, namedtuple
-from tabulate import tabulate
+
 # got the stop word list from python libary stop-words, manually adding it the program so we don't have another library dependency, and we only need the english words
 stop_words = ['a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and', 'any', 'are', "aren't", 'as', 'at', 'be', 'because', 'been', 'before', 'being', 'below', 'between', 'both', 'but', 'by', "can't", 'cannot', 'could', "couldn't", 'did', "didn't", 'do', 'does', "doesn't", 'doing', "don't", 'down', 'during', 'each', 'few', 'for', 'from', 'further', 'had', "hadn't", 'has', "hasn't", 'have', "haven't", 'having', 'he', "he'd", "he'll", "he's", 'her', 'here', "here's", 'hers', 'herself', 'him', 'himself', 'his', 'how', "how's", 'i', "i'd", "i'll", "i'm", "i've", 'if', 'in', 'into', 'is', "isn't", 'it', "it's", 'its', 'itself', "let's", 'me', 'more', 'most', "mustn't", 'my', 'myself', 'no', 'nor', 'not', 'of', 'off', 'on', 'once', 'only', 'or', 'other', 'ought', 'our', 'ours', 'ourselves', 'out', 'over', 'own', 'same', "shan't", 'she', "she'd", "she'll", "she's", 'should', "shouldn't", 'so', 'some', 'such', 'than', 'that', "that's", 'the', 'their', 'theirs', 'them', 'themselves', 'then', 'there', "there's", 'these', 'they', "they'd", "they'll", "they're", "they've", 'this', 'those', 'through', 'to', 'too', 'under', 'until', 'up', 'very', 'was', "wasn't", 'we', "we'd", "we'll", "we're", "we've", 'were', "weren't", 'what', "what's", 'when', "when's", 'where', "where's", 'which', 'while', 'who', "who's", 'whom', 'why', "why's", 'with', "won't", 'would', "wouldn't", 'you', "you'd", "you'll", "you're", "you've", 'your', 'yours', 'yourself', 'yourselves']
 documentTypes = namedtuple('documentTypes', ['dr', 'dt','l'])
@@ -89,7 +89,6 @@ def create_naive_document_dictionaries_from_training_files(base_path, is_data_pr
 def get_frequency_from_training_documents(processed_documents,drop_short=False, drop_stop_words=False, common_word=False):
 
 	if common_word:
-		print("Going to take out the common words")
 		dr_freq = get_frequency(processed_documents.dr,drop_short, drop_stop_words, common_word)
 		dt_freq = get_frequency(processed_documents.dt,drop_short, drop_stop_words, common_word)
 		l_freq = get_frequency(processed_documents.l,drop_short, drop_stop_words, common_word)
@@ -98,10 +97,7 @@ def get_frequency_from_training_documents(processed_documents,drop_short=False, 
 		dt_dict = {x[0]:x[1:] for x in dt_freq}
 		l_dict = {x[0]:x[1:] for x in l_freq}
 
-		print("Going to find some common words")
-
 		common = list(set(dr_dict.keys())^set(dt_dict.keys())^set(l_dict.keys()))
-		print("Found common words... Give is a second...")
 
 		dr_freq = [x for x in dr_freq if x[0] not in common]
 		dt_freq = [x for x in dt_freq if x[0] not in common]
@@ -136,6 +132,7 @@ def accuracy_of_results(results, answers_path, printTable=False):
 		answerGrid[answer][results[document]] += 1
 	print("Correct: {} Wrong: {} Total: {}".format(correct, total - correct , total))
 	print("Precentage: {0:.5f}%".format(float(correct/total*100), "%") )
+	""" Require tabulate module
 	#Prints Latex formated data
 	if printTable:
 		print("Latex Tables")
@@ -144,7 +141,8 @@ def accuracy_of_results(results, answers_path, printTable=False):
 			tableList.append([key, answerGrid[key]['DT'], answerGrid[key]['DR'], answerGrid[key]['L']])
 		print (tabulate(tableList, headers=['DT','DR','L'], tablefmt="latex") )
 		print( tabulate([ ["Correct: ", correct], ['Wrong:', total - correct], ['Total', total], ['Percentage:', "{0:.3f}%".format(float(correct/total*100))] ], tablefmt="latex") )
-	else:
+	"""
+	if printTable:
 		print("		   Guessed")
 		print('{0}	    {1}     {2}       {3}'.format('Correct', 'DT','DR','L') )
 		for key in answerGrid:
