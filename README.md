@@ -20,17 +20,13 @@ in the current directory that will a list of output in the form:
 ### Things to Note:
 
 1) If the user needs to run an individual strategy, perceptron.py and bayes.py take the same
-arguements as the main.py listed above. grep.py MUST take the final directory 
+arguements as the main.py listed above. grep.py MUST take the final test directory 
 (e.g. python3 grep.py ./data/TEST/)
 
-2) With our auto corrected improvement, the program runs through the original four directories 
-and makes a new directory with an auto corrected files in them. At which point this can be the new
-directory for the training and testing. Due to the inefficiency of this method (3+ hr. runtime)
-we have excluded that from the default improvements to run. If the user does want to run the 
-all improved features on the auto-corrected data, give an extra arguement "True" to the bash
-command. (e.g. bash$ python3 main.py ./data/ True)
-
-
+2) With our auto corrected improvement. Due to the inefficiency of this method (3+ hr. runtime)
+we have excluded that from the default improvements to run in main.py. We have included a directory
+with the initial data autocorrect and you may simply give that as an arguement. It was too much
+effort for too little reward to automate it.
 
 ### Archive:
 data/.............................Data files to run training and Tests on
