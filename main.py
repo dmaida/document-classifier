@@ -18,8 +18,8 @@ def main(argv):
 		output.write("Intelli-Grep," + key + "," + val + "\n")
 	print("Finished Intelli-Grep\n")
 
-	documents = create_feature.create_naive_document_dictionaries_from_training_files('data')
-	test_docs = create_feature.get_documents_from_folder(os.path.join('data', 'TEST'))
+	documents = create_feature.create_naive_document_dictionaries_from_training_files(base_path)
+	test_docs = create_feature.get_documents_from_folder(os.path.join(base_path, 'TEST'))
 	
 	print("Processing Naive Bayes...")
 	bayes_dict = bayes.naive_bayes(documents, test_docs)

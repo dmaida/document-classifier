@@ -52,7 +52,7 @@ def search(d):
 		list_of_words = None
 
 	#print (my_dict)
-	create_feature.accuracy_of_results(my_dict, "data/test-results.txt")
+	#create_feature.accuracy_of_results(my_dict, "data/test-results.txt")
 	return my_dict
 
 

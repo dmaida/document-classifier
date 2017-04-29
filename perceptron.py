@@ -93,8 +93,7 @@ def word_bag(f_path):
 	return data_list
 
 
-def create_training_set():
-	base_path = 'data'
+def create_training_set(base_path):
 	dr_path = os.path.join(base_path,'DR')
 	dt_path = os.path.join(base_path, 'DT')
 	l_path = os.path.join(base_path, 'L')
@@ -133,7 +132,7 @@ def testing(DR_p, DT_p, L_p,path):
 		return result_dict
 def perceptron_classify(documents, path, drop_short=False, drop_stop_words=False, drop_common_words=False):
     features = list(dict.fromkeys(create_feature.create_boolean_feature_set(documents,drop_short=True) ))
-    training_set = create_training_set()
+    training_set = create_training_set(path)
     DR_p = perceptron('DR',features) #DR perceptron
     DT_p = perceptron('DT',features)
     L_p = perceptron('L',features)
